@@ -3,7 +3,7 @@
 Window *window;
 TextLayer *text_layer;
 
-#define BUFFER_SIZE 4
+#define BUFFER_SIZE 5
 
 char current_sprint_buffer[BUFFER_SIZE];
 
@@ -50,6 +50,7 @@ static void update_sprint(struct tm* t) {
   if (sprint > 6) sprint = 6; // leave buffer days
 
   snprintf(current_sprint_buffer, BUFFER_SIZE, "Q%iS%i", quarter, sprint);
+  current_sprint_buffer[BUFFER_SIZE-1] = 0;
   text_layer_set_text(text_layer, current_sprint_buffer);
 }
 
