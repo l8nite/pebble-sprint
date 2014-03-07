@@ -21,11 +21,17 @@ static void update_sprint(struct tm* t) {
   
   // get the current quarter's start day so we can do math
   struct tm t_quarter = { 0 };
+  memset(&t_quarter, 0, sizeof(struct tm));
+
   t_quarter.tm_year = year_now;
   t_quarter.tm_mon = (quarter - 1) * 3;
   t_quarter.tm_mday = 1;
 
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Before initial mktime call");
+
   mktime(&t_quarter);
+  
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "After initial mktime call");
   
   // find first friday after the quarter started, this is day 1 of sprint 1
   while (t_quarter.tm_wday != 5) {
@@ -68,6 +74,8 @@ void handle_init(void) {
   text_layer_set_font(text_layer, font);
   layer_add_child(root_layer, text_layer_get_layer(text_layer));
   
+  APP_LOG(APP_LOG_LEVEL_INFO, "Calling update_sprint");
+
   time_t now = time(NULL);
   struct tm *t = localtime(&now);
   update_sprint(t);
