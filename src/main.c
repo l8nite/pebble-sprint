@@ -29,7 +29,6 @@ static void update_sprint(struct tm* t) {
 
   p_mktime(&t_quarter);
 
-  
   // find first friday after the quarter started, this is day 1 of sprint 1
   while (t_quarter.tm_wday != 5) {
     t_quarter.tm_mday++;
@@ -100,7 +99,6 @@ void test(void)
     strftime(buffer, 80, "%F", &day);
     update_sprint(&day);
     printf("%s: %s\n", buffer, current_sprint_buffer);
-  	//printf("%s\n", buffer);
     day.tm_mday++;
     p_mktime(&day);
     mktime(&day);
