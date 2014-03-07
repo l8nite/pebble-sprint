@@ -1,7 +1,12 @@
+#ifndef TEST
 #include <pebble.h>
 
 Window *window;
 TextLayer *text_layer;
+#else
+#include <stdio.h>
+#include <time.h>
+#endif
 
 #define BUFFER_SIZE 5
 
@@ -12,29 +17,14 @@ static void update_sprint(struct tm* t) {
   int yday_now = t->tm_yday;
   int year_now = t->tm_year;
   
-  int quarter = 1 + (month / 4);
+  int quarter = month <= 3 ? 1 : month <= 6 ? 2 : month <= 9 ? 3 : 4;
   
   // get the current quarter's start day so we can do math
   struct tm t_quarter = { 0 };
   t_quarter.tm_year = year_now;
-  
-  if (quarter == 1) { // january 1st
-    t_quarter.tm_mon = 0;
-    t_quarter.tm_mday = 1;
-  }
-  else if (quarter == 2) { // april 1st
-    t_quarter.tm_mon = 3;
-    t_quarter.tm_mday = 1;
-  }
-  else if (quarter == 3) { // july 1st
-    t_quarter.tm_mon = 6;
-    t_quarter.tm_mday = 1;
-  }
-  else if (quarter == 4) { // october 1st
-    t_quarter.tm_mon = 9;
-    t_quarter.tm_mday = 1;
-  }
-  
+  t_quarter.tm_mon = (quarter - 1) * 3;
+  t_quarter.tm_mday = 1;
+
   mktime(&t_quarter);
   
   // find first friday after the quarter started, this is day 1 of sprint 1
@@ -51,11 +41,12 @@ static void update_sprint(struct tm* t) {
 
   snprintf(current_sprint_buffer, BUFFER_SIZE, "Q%iS%i", quarter, sprint);
   current_sprint_buffer[BUFFER_SIZE-1] = 0;
-  text_layer_set_text(text_layer, current_sprint_buffer);
 }
 
+#ifndef TEST
 static void handle_day_tick(struct tm *tick_time, TimeUnits units_changed) {
   update_sprint(tick_time);
+  text_layer_set_text(text_layer, current_sprint_buffer);
 }
 
 void handle_init(void) {
@@ -89,9 +80,37 @@ void handle_deinit(void) {
 	  text_layer_destroy(text_layer);
 	  window_destroy(window);
 }
+#else
+void test(void)
+{
+  struct tm day = { 0 };
+  day.tm_year = 114;
+  day.tm_mon = 0;
+  day.tm_mday = 1;
+  mktime(&day);
+
+  char buffer[80];
+  int i = 0;
+  for (i = 0; i < 365; i++)
+  {
+    strftime(buffer, 80, "%F", &day);
+    update_sprint(&day);
+    printf("%s: %s\n", buffer, current_sprint_buffer);
+  	//printf("%s\n", buffer);
+    day.tm_mday++;
+    mktime(&day);
+  }
+}
+#endif
 
 int main(void) {
-	  handle_init();
-	  app_event_loop();
-	  handle_deinit();
+#ifdef TEST
+  test();
+  return 0;
+#else
+  handle_init();
+	app_event_loop();
+	handle_deinit();
+#endif
 }
+
