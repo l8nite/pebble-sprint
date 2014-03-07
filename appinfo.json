@@ -1,0 +1,18 @@
+{
+    "versionLabel": "1.0",
+    "uuid": "7185de8d-9c70-49d0-a433-dae475f416df",
+    "appKeys": {},
+    "longName": "What sprint is it?",
+    "versionCode": 1,
+    "capabilities": [
+        ""
+    ],
+    "shortName": "What sprint is it?",
+    "companyName": "Shaun Guth",
+    "watchapp": {
+        "watchface": true
+    },
+    "resources": {
+        "media": []
+    }
+}
