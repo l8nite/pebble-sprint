@@ -1,2 +1,2 @@
 default:
-	gcc -DTEST -o test src/PDutils.c src/main.c
+	gcc -DTEST -o test src/mktime.c src/main.c

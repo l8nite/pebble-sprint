@@ -4,10 +4,9 @@ Window *window;
 TextLayer *text_layer;
 #else
 #include <stdio.h>
-#include <time.h>
 #endif
 
-#include "PDutils.h"
+#include "mktime.h"
 
 #define BUFFER_SIZE 5
 
@@ -27,12 +26,12 @@ static void update_sprint(struct tm* t) {
   t_quarter.tm_mon = (quarter - 1) * 3;
   t_quarter.tm_mday = 1;
 
-  p_mktime(&t_quarter);
+  mktime(&t_quarter);
 
   // find first friday after the quarter started, this is day 1 of sprint 1
   while (t_quarter.tm_wday != 5) {
     t_quarter.tm_mday++;
-    p_mktime(&t_quarter);
+    mktime(&t_quarter);
     mktime(&t_quarter);
   }
 
@@ -90,7 +89,7 @@ void test(void)
   day.tm_year = 114;
   day.tm_mon = 0;
   day.tm_mday = 1;
-  p_mktime(&day);
+  mktime(&day);
 
   char buffer[80];
   int i = 0;
@@ -100,7 +99,7 @@ void test(void)
     update_sprint(&day);
     printf("%s: %s\n", buffer, current_sprint_buffer);
     day.tm_mday++;
-    p_mktime(&day);
+    mktime(&day);
     mktime(&day);
   }
 }
